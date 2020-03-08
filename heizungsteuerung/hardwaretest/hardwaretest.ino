@@ -7,10 +7,14 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
 
 //pins
 const int ThermistorPin = 0;
-const int UpMinPin = 2;
-const int DownMinPin = 3;
-const int UpMaxPin = 4;
-const int DownMaxPin = 5;
+const int Button2 = 2; //left up
+const int Button3 = 3; //right up
+const int Button4 = 4; //right down
+const int Button5 = 5; //left down
+
+const int PinGnd=6;
+const int PinVcc=7;
+
 const int ServoPin = 9;
 
 //buttons
@@ -31,7 +35,17 @@ void setup() {
   myservo.attach(ServoPin);  // attaches the servo on pin 9 to the servo object
   u8x8.begin();
   u8x8.setPowerSave(0);
-}
+
+  pinMode(Button2, INPUT);
+  pinMode(Button3, INPUT);
+  pinMode(Button4, INPUT);
+  pinMode(Button5, INPUT);
+  
+  pinMode(PinGnd, OUTPUT);
+  pinMode(PinVcc, OUTPUT);
+  digitalWrite(PinGnd, LOW);
+  digitalWrite(PinVcc, HIGH);
+  }
 
 void loop() {
   testServo();
@@ -68,7 +82,7 @@ void testGetTemp() {
 }
 
 void testServo(){
- for(pos = 0; pos < 180; pos += 1) 
+ for(pos = 0; pos < 10; pos += 1) 
  {                                 
     myservo.write(pos);            
     delay(15);                     
