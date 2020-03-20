@@ -32,6 +32,11 @@ float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 int pos = 0;
 Servo heaterServo;
 
+//Display vars
+char maxLine[10];
+char curTempString[3];
+char minLine[10];
+
 void setup(void) {
   Serial.begin(9600);
 
@@ -52,7 +57,6 @@ void setup(void) {
   digitalWrite(PinVcc,HIGH);
 }
 
-
 void loop(void)
 {
   get_temp();
@@ -69,26 +73,30 @@ void get_temp() {
   R2 = R1 * (1023.0 / (float)Vo - 1.0);
   logR2 = log(R2);
   Tk = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
-  currentTemp = Tk - 273.15;
+  currentTemp = Tk - 268;
 }
 
 
 void get_user_input() {
   //min buttons
   if (digitalRead(Button2) == HIGH) {
+    Serial.println("Button2");
     if (minTemp < maxTemp) {
       minTemp++;
     }
   }
   if (digitalRead(Button3) == HIGH) {
+    Serial.println("Button3");
     minTemp--;
   }
 
   //max buttons
   if (digitalRead(Button5) == HIGH) {
+    Serial.println("Button5");
     maxTemp++;
   }
   if (digitalRead(Button4) == HIGH) {
+    Serial.println("Button4");
     if(maxTemp>minTemp){
     maxTemp--;
     }
@@ -111,19 +119,17 @@ void calc_servo_pos(){
 
 void draw_overview() {
   u8x8.setFont(u8x8_font_7x14B_1x2_f);
-  char maxLine[10];
   snprintf(maxLine, sizeof maxLine, "%s%d", "Max: ", maxTemp);
   u8x8.drawString(0, 0, maxLine);
 
   u8x8.setFont(u8x8_font_courB18_2x3_f);
-  char curTempString[3];
   dtostrf(currentTemp, 3, 1, curTempString);
   char curLine[10];
   snprintf(curLine, sizeof curLine, "%s%s", "Now:", curTempString);
   u8x8.drawString(0, 2, curLine);
+  Serial.println(curLine);
 
   u8x8.setFont(u8x8_font_7x14B_1x2_f);
-  char minLine[10];
   snprintf(minLine, sizeof minLine, "%s%d", "Min: ", minTemp);
   u8x8.drawString(0, 5, minLine);
 }
