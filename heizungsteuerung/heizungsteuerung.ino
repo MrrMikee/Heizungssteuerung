@@ -85,10 +85,10 @@ void get_user_input() {
   }
 
   //max buttons
-  if (digitalRead(Button4) == HIGH) {
+  if (digitalRead(Button5) == HIGH) {
     maxTemp++;
   }
-  if (digitalRead(Button5) == HIGH) {
+  if (digitalRead(Button4) == HIGH) {
     if(maxTemp>minTemp){
     maxTemp--;
     }
