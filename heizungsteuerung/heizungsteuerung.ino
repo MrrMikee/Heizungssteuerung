@@ -8,8 +8,8 @@ U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(U8X8_PIN_NONE);
 
 //pins
 const int ThermistorPin = 0;
-const int Button2 = 2;
-const int Button3 = 3;
+//const int Button2 = 12;
+//const int Button3 = 13;
 const int Button4 = 4;
 const int Button5 = 5;
 
@@ -19,8 +19,8 @@ const int PinGnd=6;
 const int PinVcc=7;
 
 //settings
-int maxTemp = 25;
-int minTemp = 20;
+int maxTemp = 23;
+int minTemp = 22;
 
 //temparature calculation vars
 int Vo;
@@ -43,8 +43,8 @@ void setup(void) {
   u8x8.begin();
   u8x8.setPowerSave(0);
 
-  pinMode(Button2, INPUT);
-  pinMode(Button3, INPUT);
+//  pinMode(Button2, INPUT);
+//  pinMode(Button3, INPUT);
   pinMode(Button4, INPUT);
   pinMode(Button5, INPUT);
 
@@ -79,25 +79,29 @@ void get_temp() {
 
 void get_user_input() {
   //min buttons
-  if (digitalRead(Button2) == HIGH) {
-    Serial.println("Button2");
-    if (minTemp < maxTemp) {
-      minTemp++;
-    }
-  }
-  if (digitalRead(Button3) == HIGH) {
-    Serial.println("Button3");
-    minTemp--;
-  }
+//  if (digitalRead(Button2) == HIGH) {
+//    Serial.println("Button2");
+//    if (minTemp < maxTemp) {
+//      minTemp++;
+//    }
+//  }
+//  if (digitalRead(Button3) == HIGH) {
+//    Serial.println("Button3");
+//    minTemp--;
+//  }
 
   //max buttons
   if (digitalRead(Button5) == HIGH) {
     Serial.println("Button5");
     maxTemp++;
+    // also increase lower temp, because button is broken
+    minTemp++;
   }
   if (digitalRead(Button4) == HIGH) {
     Serial.println("Button4");
     if(maxTemp>minTemp){
+    // also decrease lower temp, because button is broken
+    minTemp--;
     maxTemp--;
     }
   }
