@@ -1,0 +1,37 @@
+#include "DHT.h"
+
+#define DHTTYPE DHT22
+#define PIN_DHT22 2
+
+DHT dht(PIN_DHT22, DHTTYPE);
+float humidity, temperature;
+
+const int highPin=7;
+const int lowPin=6;
+
+void setup()
+{
+    pinMode(highPin, OUTPUT);
+    digitalWrite(highPin, HIGH);
+
+    pinMode(lowPin, OUTPUT);
+    digitalWrite(lowPin, LOW);
+
+    
+    Serial.begin(9600);
+    dht.begin();
+}
+
+void loop()
+{
+    humidity = dht.readHumidity();
+    temperature = dht.readTemperature();
+
+    Serial.print("Humidity: ");
+    Serial.print(humidity);
+    Serial.print("%, Temperature: ");
+    Serial.print(temperature);
+    Serial.println("°C");
+
+    delay(1000);
+}
