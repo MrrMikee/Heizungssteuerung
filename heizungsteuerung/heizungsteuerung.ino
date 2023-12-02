@@ -1,6 +1,11 @@
 #include <Arduino.h>
 #include <U8x8lib.h>
 #include <Servo.h>
+#include "DHT.h"
+
+
+#define DHTTYPE DHT22
+#define PIN_DHT22 2
 
 
 //display
@@ -19,14 +24,12 @@ const int PinGnd=6;
 const int PinVcc=7;
 
 //settings
-int maxTemp = 23;
-int minTemp = 22;
+int maxTemp = 19;
+int minTemp = 18;
 
-//temparature calculation vars
-int Vo;
-float R1 = 10000;
-float logR2, R2, Tk, currentTemp;
-float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
+//Temparature vars
+DHT dht(PIN_DHT22, DHTTYPE);
+float currentTemp;
 
 //Servo vars
 int pos = 0;
@@ -42,6 +45,7 @@ void setup(void) {
 
   u8x8.begin();
   u8x8.setPowerSave(0);
+  dht.begin();
 
 //  pinMode(Button2, INPUT);
 //  pinMode(Button3, INPUT);
@@ -63,17 +67,17 @@ void loop(void)
   get_user_input();
   calc_servo_pos();
   draw_overview();
-  Serial.println(currentTemp, pos);
+  Serial.print(" Temparature: ");
+  Serial.print(currentTemp);
+  Serial.print(" Position: ");
+  Serial.print(pos);
+  Serial.println();
   delay(2000);
 }
 
 
 void get_temp() {
-  Vo = analogRead(ThermistorPin);
-  R2 = R1 * (1023.0 / (float)Vo - 1.0);
-  logR2 = log(R2);
-  Tk = (1.0 / (c1 + c2 * logR2 + c3 * logR2 * logR2 * logR2));
-  currentTemp = Tk - 268;
+  currentTemp = dht.readTemperature();
 }
 
 
@@ -92,13 +96,13 @@ void get_user_input() {
 
   //max buttons
   if (digitalRead(Button5) == HIGH) {
-    Serial.println("Button5");
+    Serial.print("Button5 is pressed ");
     maxTemp++;
     // also increase lower temp, because button is broken
     minTemp++;
   }
   if (digitalRead(Button4) == HIGH) {
-    Serial.println("Button4");
+    Serial.print(" Button4 is pressed ");
     if(maxTemp>minTemp){
     // also decrease lower temp, because button is broken
     minTemp--;
@@ -131,8 +135,7 @@ void draw_overview() {
   char curLine[10];
   snprintf(curLine, sizeof curLine, "%s%s", "Now:", curTempString);
   u8x8.drawString(0, 2, curLine);
-  Serial.println(curLine);
-
+  
   u8x8.setFont(u8x8_font_7x14B_1x2_f);
   snprintf(minLine, sizeof minLine, "%s%d", "Min: ", minTemp);
   u8x8.drawString(0, 5, minLine);
